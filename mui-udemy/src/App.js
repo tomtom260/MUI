@@ -1,11 +1,13 @@
-import "./App.css"
+import { ThemeProvider } from "@material-ui/styles"
 import Header from "./components/ui/Header"
+import theme from "./components/ui/Theme"
+import "./App.css"
 
 function App() {
   return (
-    <div className="App">
+    <ThemeProvider theme={theme}>
       <Header />
-    </div>
+    </ThemeProvider>
   )
 }
 
