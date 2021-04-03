@@ -17,4 +17,12 @@ export default createMuiTheme({
       main: arcOrange,
     },
   },
+  typography: {
+    tab: {
+      textTransform: "none",
+      fontFamily: "Raleway",
+      fontWeight: "700",
+      fontSize: "1rem",
+    },
+  },
 })

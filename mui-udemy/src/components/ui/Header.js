@@ -1,5 +1,5 @@
 import React from "react"
-import { AppBar, Toolbar, useScrollTrigger } from "@material-ui/core"
+import { AppBar, Tab, Tabs, Toolbar, useScrollTrigger } from "@material-ui/core"
 import { makeStyles } from "@material-ui/styles"
 
 import logo from "../../assets/images/logo.svg"
@@ -10,7 +10,14 @@ function Header() {
     toolbarMargin: { ...theme.mixins.toolbar, marginBottom: "3rem" },
     logo: {
       height: "7rem",
-      //   width: "",
+    },
+    tabContainer: {
+      marginLeft: "auto",
+    },
+    tab: {
+      ...theme.typography.tab,
+      minWidth: "10rem",
+      marginLeft: "25px",
     },
   }))
 
@@ -30,9 +37,16 @@ function Header() {
   return (
     <>
       <ElevationScroll>
-        <AppBar color="secondary">
+        <AppBar color="primary">
           <Toolbar disableGutters>
             <img className={classes.logo} src={logo} alt="company logo" />
+            <Tabs className={classes.tabContainer}>
+              <Tab disableRipple className={classes.tab} label="Home" />
+              <Tab disableRipple className={classes.tab} label="Services" />
+              <Tab disableRipple className={classes.tab} label="Revolution" />
+              <Tab disableRipple className={classes.tab} label="About Us" />
+              <Tab disableRipple className={classes.tab} label="Contact Us" />
+            </Tabs>
           </Toolbar>
         </AppBar>
       </ElevationScroll>
