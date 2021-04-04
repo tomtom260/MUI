@@ -2,6 +2,8 @@ import React, { useState } from "react"
 import {
   AppBar,
   Button,
+  Menu,
+  MenuItem,
   Tab,
   Tabs,
   Toolbar,
@@ -11,6 +13,42 @@ import { makeStyles } from "@material-ui/styles"
 
 import logo from "../../assets/images/logo.svg"
 import { Link, useHistory } from "react-router-dom"
+
+function ElevationScroll({ children }) {
+  const trigger = useScrollTrigger({
+    disableHysteresis: true,
+    threshold: 0,
+  })
+
+  return React.cloneElement(children, {
+    elevation: trigger ? 4 : 0,
+  })
+}
+
+let currentLocation = ""
+switch (window.location.pathname) {
+  case "/website":
+  case "/apps":
+  case "custom":
+  case "/services":
+    currentLocation = 1
+    break
+  case "/revolution":
+    currentLocation = 2
+    break
+  case "/about":
+    currentLocation = 3
+    break
+  case "/contact":
+    currentLocation = 4
+    break
+  case "/":
+    currentLocation = 0
+    break
+  default:
+    // currentLocation = 0
+    break
+}
 
 function Header() {
   const useStyles = makeStyles(theme => ({
@@ -35,45 +73,57 @@ function Header() {
       height: "45px",
       ...theme.typography.estimate,
     },
+    menu: {
+      backgroundColor: theme.palette.common.blue,
+      color: "white",
+      borderRadius: "0",
+    },
+    menuItem: {
+      ...theme.typography.tab,
+      opacity: "0.7",
+      "&:hover": {
+        opacity: "1",
+      },
+    },
   }))
 
   const classes = useStyles()
 
-  function ElevationScroll({ children }) {
-    const trigger = useScrollTrigger({
-      disableHysteresis: true,
-      threshold: 0,
-    })
-
-    return React.cloneElement(children, {
-      elevation: trigger ? 4 : 0,
-    })
-  }
-
-  let currentLocation = 0
-  switch (window.location.pathname) {
-    case "/services":
-      currentLocation = 1
-      break
-    case "/revolution":
-      currentLocation = 2
-      break
-    case "/about":
-      currentLocation = 3
-      break
-    case "/contact":
-      currentLocation = 4
-      break
-    case "/":
-    default:
-      currentLocation = 0
-      break
-  }
+  const tabItems = [
+    {
+      label: "Home",
+      to: "/",
+    },
+    {
+      label: "Services",
+      to: "/services",
+    },
+    {
+      label: "The Revolution",
+      to: "/revolution",
+    },
+    {
+      label: "About Us",
+      to: "/about",
+    },
+    {
+      label: "Contact Us",
+      to: "/contact",
+    },
+  ]
 
   const [value, setValue] = useState(currentLocation)
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [open, setOpen] = useState(false)
+
   const history = useHistory()
   const handleChange = (e, value) => {
     setValue(value)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+    setAnchorEl(null)
   }
 
   return (
@@ -96,41 +146,22 @@ function Header() {
               className={classes.tabContainer}
               indicatorColor="primary"
             >
-              <Tab
-                disableRipple
-                component={Link}
-                to="/"
-                className={classes.tab}
-                label="Home"
-              />
-              <Tab
-                disableRipple
-                component={Link}
-                to="/services"
-                className={classes.tab}
-                label="Services"
-              />
-              <Tab
-                disableRipple
-                component={Link}
-                to="/revolution"
-                className={classes.tab}
-                label="Revolution"
-              />
-              <Tab
-                disableRipple
-                component={Link}
-                to="/about"
-                className={classes.tab}
-                label="About Us"
-              />
-              <Tab
-                disableRipple
-                component={Link}
-                to="/contact"
-                className={classes.tab}
-                label="Contact Us"
-              />
+              {tabItems.map(item => (
+                <Tab
+                  onMouseOver={e => {
+                    if (item.label === "Services") {
+                      setAnchorEl(e.currentTarget)
+                      setOpen(true)
+                    }
+                  }}
+                  key={item}
+                  disableRipple
+                  component={Link}
+                  to={item.to}
+                  className={classes.tab}
+                  label={item.label}
+                />
+              ))}
             </Tabs>
             <Button
               variant="contained"
@@ -139,6 +170,60 @@ function Header() {
             >
               Free Estimate
             </Button>
+            <Menu
+              MenuListProps={{ onMouseLeave: handleClose }}
+              onClose={handleClose}
+              anchorEl={anchorEl}
+              open={open}
+              classes={{ paper: classes.menu }}
+              disableGutters
+              elevation={0}
+            >
+              <MenuItem
+                classes={{ root: classes.menuItem }}
+                component={Link}
+                to="/services"
+                onClick={() => {
+                  handleClose()
+                  setValue(1)
+                }}
+              >
+                Services
+              </MenuItem>
+              <MenuItem
+                classes={{ root: classes.menuItem }}
+                component={Link}
+                to="/custom"
+                onClick={() => {
+                  handleClose()
+                  setValue(1)
+                }}
+              >
+                Custom Software Development
+              </MenuItem>
+              <MenuItem
+                classes={{ root: classes.menuItem }}
+                onClick={() => {
+                  handleClose()
+                  setValue(1)
+                }}
+                component={Link}
+                to="/website"
+              >
+                Website Development
+              </MenuItem>
+              <MenuItem
+                classes={{ root: classes.menuItem }}
+                onClick={() => {
+                  handleClose()
+                  setValue(1)
+                }}
+                component={Link}
+                to="/apps"
+              >
+                App Development
+              </MenuItem>
+            </Menu>
           </Toolbar>
         </AppBar>
       </ElevationScroll>
