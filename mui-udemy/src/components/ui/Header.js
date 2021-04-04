@@ -111,6 +111,24 @@ function Header() {
       to: "/contact",
     },
   ]
+  const menuItems = [
+    {
+      label: "Services",
+      to: "/services",
+    },
+    {
+      label: "Custom Software Development",
+      to: "/custom ",
+    },
+    {
+      label: "Website Development",
+      to: "/website",
+    },
+    {
+      label: "Mobile app Development",
+      to: "/app",
+    },
+  ]
 
   const [value, setValue] = useState(currentLocation)
   const [anchorEl, setAnchorEl] = useState(null)
@@ -179,50 +197,19 @@ function Header() {
               disableGutters
               elevation={0}
             >
-              <MenuItem
-                classes={{ root: classes.menuItem }}
-                component={Link}
-                to="/services"
-                onClick={() => {
-                  handleClose()
-                  setValue(1)
-                }}
-              >
-                Services
-              </MenuItem>
-              <MenuItem
-                classes={{ root: classes.menuItem }}
-                component={Link}
-                to="/custom"
-                onClick={() => {
-                  handleClose()
-                  setValue(1)
-                }}
-              >
-                Custom Software Development
-              </MenuItem>
-              <MenuItem
-                classes={{ root: classes.menuItem }}
-                onClick={() => {
-                  handleClose()
-                  setValue(1)
-                }}
-                component={Link}
-                to="/website"
-              >
-                Website Development
-              </MenuItem>
-              <MenuItem
-                classes={{ root: classes.menuItem }}
-                onClick={() => {
-                  handleClose()
-                  setValue(1)
-                }}
-                component={Link}
-                to="/apps"
-              >
-                App Development
-              </MenuItem>
+              {menuItems.map(item => (
+                <MenuItem
+                  classes={{ root: classes.menuItem }}
+                  component={Link}
+                  to={item.to}
+                  onClick={() => {
+                    handleClose()
+                    setValue(1)
+                  }}
+                >
+                  {item.label}
+                </MenuItem>
+              ))}
             </Menu>
           </Toolbar>
         </AppBar>

@@ -24,7 +24,7 @@ function App() {
             component={() => <div>Contact Us</div>}
           />
           <Route exact path="/website" component={() => <div>Websites</div>} />
-          <Route exact path="/apps" component={() => <div>Mobile apps</div>} />
+          <Route exact path="/app" component={() => <div>Mobile apps</div>} />
           <Route
             exact
             path="/custom"
