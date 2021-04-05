@@ -2,14 +2,18 @@ import React, { useState } from "react"
 import {
   AppBar,
   Button,
+  IconButton,
   Menu,
   MenuItem,
+  SwipeableDrawer,
   Tab,
   Tabs,
   Toolbar,
+  useMediaQuery,
   useScrollTrigger,
 } from "@material-ui/core"
-import { makeStyles } from "@material-ui/styles"
+import { makeStyles, useTheme } from "@material-ui/styles"
+import MenuIcon from "@material-ui/icons/Menu"
 
 import logo from "../../assets/images/logo.svg"
 import { Link, useHistory } from "react-router-dom"
@@ -28,8 +32,8 @@ function ElevationScroll({ children }) {
 let currentLocation = ""
 switch (window.location.pathname) {
   case "/website":
-  case "/apps":
-  case "custom":
+  case "/app":
+  case "/custom":
   case "/services":
     currentLocation = 1
     break
@@ -53,10 +57,25 @@ switch (window.location.pathname) {
 function Header() {
   const useStyles = makeStyles(theme => ({
     //setting min height of toolbar to div
-    toolbarMargin: { ...theme.mixins.toolbar, marginBottom: "3rem" },
+    toolbarMargin: {
+      ...theme.mixins.toolbar,
+      marginBottom: "3rem",
+      [theme.breakpoints.down("md")]: {
+        marginBottom: "2rem",
+      },
+      [theme.breakpoints.down("xs")]: {
+        marginBottom: "1rem",
+      },
+    },
     logo: {
       height: "6rem",
       cursor: "pointer",
+      [theme.breakpoints.down("md")]: {
+        height: "5rem",
+      },
+      [theme.breakpoints.down("xs")]: {
+        height: "4rem",
+      },
     },
     tabContainer: {
       marginLeft: "auto",
@@ -83,6 +102,20 @@ function Header() {
       opacity: "0.7",
       "&:hover": {
         opacity: "1",
+      },
+    },
+
+    menuIcon: {
+      height: "2.5rem",
+      width: "2.5rem",
+      color: "white",
+    },
+
+    iconContainer: {
+      marginLeft: "auto",
+
+      "&:hover": {
+        backgroundColor: "transparent",
       },
     },
   }))
@@ -118,7 +151,7 @@ function Header() {
     },
     {
       label: "Custom Software Development",
-      to: "/custom ",
+      to: "/custom",
     },
     {
       label: "Website Development",
@@ -133,6 +166,8 @@ function Header() {
   const [value, setValue] = useState(currentLocation)
   const [anchorEl, setAnchorEl] = useState(null)
   const [open, setOpen] = useState(false)
+  const [selectedIndex, setSelectedIndex] = useState(null)
+  const [openDrawer, setOpenDrawer] = useState(false)
 
   const history = useHistory()
   const handleChange = (e, value) => {
@@ -143,6 +178,89 @@ function Header() {
     setOpen(false)
     setAnchorEl(null)
   }
+
+  const theme = useTheme()
+  const matches = useMediaQuery(theme.breakpoints.down("md"))
+  const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent)
+
+  const tabs = (
+    <>
+      <Tabs
+        value={value}
+        onChange={handleChange}
+        className={classes.tabContainer}
+        indicatorColor="primary"
+      >
+        {tabItems.map(item => (
+          <Tab
+            onMouseOver={e => {
+              if (item.label === "Services") {
+                setAnchorEl(e.currentTarget)
+                setOpen(true)
+              }
+            }}
+            key={item}
+            disableRipple
+            component={Link}
+            to={item.to}
+            className={classes.tab}
+            label={item.label}
+          />
+        ))}
+      </Tabs>
+      <Button variant="contained" color="secondary" className={classes.button}>
+        Free Estimate
+      </Button>
+      <Menu
+        MenuListProps={{ onMouseLeave: handleClose }}
+        onClose={handleClose}
+        anchorEl={anchorEl}
+        open={open}
+        classes={{ paper: classes.menu }}
+        disableGutters
+        elevation={0}
+      >
+        {menuItems.map((item, index) => (
+          <MenuItem
+            key={item}
+            selected={index === selectedIndex && value === 1}
+            classes={{ root: classes.menuItem }}
+            component={Link}
+            to={item.to}
+            onClick={() => {
+              handleClose()
+              setValue(1)
+              setSelectedIndex(index)
+            }}
+          >
+            {item.label}
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
+  )
+  const drawer = (
+    <>
+      <SwipeableDrawer
+        open={openDrawer}
+        // onOpen={() => setOpenDrawer(true)}
+        onClose={() => setOpenDrawer(false)}
+        disableBackdropTransition={!iOS}
+        disableDiscovery={iOS}
+      >
+        Swipeable Drawer
+      </SwipeableDrawer>
+      <IconButton
+        disableRipple
+        onClick={() => {
+          setOpenDrawer(!openDrawer)
+        }}
+        className={classes.iconContainer}
+      >
+        <MenuIcon className={classes.menuIcon} />
+      </IconButton>
+    </>
+  )
 
   return (
     <>
@@ -158,59 +276,7 @@ function Header() {
               src={logo}
               alt="company logo"
             />
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              className={classes.tabContainer}
-              indicatorColor="primary"
-            >
-              {tabItems.map(item => (
-                <Tab
-                  onMouseOver={e => {
-                    if (item.label === "Services") {
-                      setAnchorEl(e.currentTarget)
-                      setOpen(true)
-                    }
-                  }}
-                  key={item}
-                  disableRipple
-                  component={Link}
-                  to={item.to}
-                  className={classes.tab}
-                  label={item.label}
-                />
-              ))}
-            </Tabs>
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.button}
-            >
-              Free Estimate
-            </Button>
-            <Menu
-              MenuListProps={{ onMouseLeave: handleClose }}
-              onClose={handleClose}
-              anchorEl={anchorEl}
-              open={open}
-              classes={{ paper: classes.menu }}
-              disableGutters
-              elevation={0}
-            >
-              {menuItems.map(item => (
-                <MenuItem
-                  classes={{ root: classes.menuItem }}
-                  component={Link}
-                  to={item.to}
-                  onClick={() => {
-                    handleClose()
-                    setValue(1)
-                  }}
-                >
-                  {item.label}
-                </MenuItem>
-              ))}
-            </Menu>
+            {matches ? drawer : tabs}
           </Toolbar>
         </AppBar>
       </ElevationScroll>
